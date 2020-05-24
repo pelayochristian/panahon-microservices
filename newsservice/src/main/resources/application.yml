@@ -1,0 +1,27 @@
+#server:
+#  port: 8881
+#eureka:
+#  instance:
+#    prefer-ip-address: true
+#  client:
+#    fetch-registry: true
+#    register-with-eureka: true
+#    service-url:
+#      defaultZone: http://localhost:8761/eureka/
+#
+## REDIS CONFIG
+#redis:
+#  expire:
+#    duration: 30
+#
+## SPRING CONFIG
+#spring:
+#  redis:
+#    port: 6379
+#    host: 192.168.99.100
+#
+## NEWS_API CONFIGURATION
+#api:
+#  news-api:
+#    uri: http://newsapi.org/v2/top-headlines?country=%s&apiKey=%s
+#    token: 5003cc84786d46838137513086f998cc

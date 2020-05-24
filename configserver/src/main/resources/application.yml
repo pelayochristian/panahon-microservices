@@ -3,10 +3,12 @@ server:
 spring:
   cloud:
     config:
+      discovery:
+        enabled: true
       server:
         git:
-          uri: https://github.com/pelayochristian/config-repo/
-          searchPaths: newsservice
+          uri: https://github.com/pelayochristian/config-repo
+          searchPaths: gatewayserver,newsservice
           username: pelayochristian
           password: chan@082417
           default-label: master

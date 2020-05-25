@@ -1,0 +1,44 @@
+version: "3"
+
+services:
+  eurekaserver:
+    build:
+      context: ../../eurekaserver
+      dockerfile: ./Dockerfile
+    ports:
+      - 8761:8761
+  configserver:
+    build:
+      context: ../../configserver
+      dockerfile: ./Dockerfile
+    ports:
+      - 8888:8888
+    depends_on:
+      - eurekaserver
+  gatewayserver:
+    build:
+      context: ../../gatewayserver
+      dockerfile: ./Dockerfile
+    ports:
+      - 8080:8080
+    environment:
+      PROFILE: "dev"
+      CONFIGSERVER_URL: "http://configserver:8888"
+      CONFIGSERVER_PORT: "8888"
+    depends_on:
+      - configserver
+      - eurekaserver
+  newsservice:
+    build:
+      context: ../../newsservice
+      dockerfile: ./Dockerfile
+    ports:
+      - 8881:8881
+    environment:
+      PROFILE: "dev"
+      CONFIGSERVER_URL: "http://configserver:8888"
+      CONFIGSERVER_PORT: "8888"
+    depends_on:
+      - configserver
+      - eurekaserver
+

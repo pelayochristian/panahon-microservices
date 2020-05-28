@@ -18,6 +18,13 @@
         <java.version>1.8</java.version>
     </properties>
 
+    <!-- Panahon modules-->
+    <modules>
+        <module>configserver</module>
+        <module>eurekaserver</module>
+        <module>newsservice</module>
+        <module>gatewayserver</module>
+    </modules>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>

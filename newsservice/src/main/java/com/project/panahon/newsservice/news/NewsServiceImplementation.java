@@ -72,7 +72,8 @@ public class NewsServiceImplementation implements NewsService {
         Map<String, Object> jsonResponse = new HashMap<>();
 
         // Construct URL for retrieving from API
-        String url = String.format("http://newsapi.org/v2/top-headlines?country=%s&apiKey=%s", country, "5003cc84786d46838137513086f998cc");
+//        String url = String.format("http://newsapi.org/v2/top-headlines?country=%s&apiKey=%s", country, "5003cc84786d46838137513086f998cc");
+        String url = String.format(serviceConfig.getNewsAPIURL(), country, serviceConfig.getNewsAPIToken());
 
         try {
 

@@ -97,6 +97,6 @@ public class RedisCacheManager {
      */
     @SuppressWarnings("unchecked")
     public void obtainExpire(String key) {
-        redisTemplate.expire(key, serviceConfig.getExpireDuration(), TimeUnit.MINUTES);
+        redisTemplate.expire(key, 1, TimeUnit.MINUTES);
     }
 }

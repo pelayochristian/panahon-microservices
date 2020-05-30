@@ -7,7 +7,7 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 
 @SpringBootApplication
 @EnableEurekaClient
-@RefreshScope
+//@RefreshScope
 public class GatewayServerApplication {
 
     public static void main(String[] args) {

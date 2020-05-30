@@ -5,40 +5,43 @@ services:
     build:
       context: ../../eurekaserver
       dockerfile: ./Dockerfile
+    hostname: eurekaserver
     ports:
-      - 8761:8761
+      - "8761:8761"
   configserver:
     build:
       context: ../../configserver
       dockerfile: ./Dockerfile
-    ports:
-      - 8888:8888
-    depends_on:
-      - eurekaserver
-  gatewayserver:
-    build:
-      context: ../../gatewayserver
-      dockerfile: ./Dockerfile
-    ports:
-      - 8080:8080
+    hostname: configserver
     environment:
-      PROFILE: "dev"
-      CONFIGSERVER_URL: "http://configserver:8888"
-      CONFIGSERVER_PORT: "8888"
-    depends_on:
-      - configserver
-      - eurekaserver
+      EUREKA_HOST: eurekaserver
+      EUREKA_PORT: 8761
+    ports:
+      - "8888:8888"
   newsservice:
     build:
       context: ../../newsservice
       dockerfile: ./Dockerfile
-    ports:
-      - 8881:8881
-    environment:
-      PROFILE: "dev"
-      CONFIGSERVER_URL: "http://configserver:8888"
-      CONFIGSERVER_PORT: "8888"
-    depends_on:
-      - configserver
+    links:
       - eurekaserver
+      - configserver
+    environment:
+      EUREKA_HOST: eurekaserver
+      EUREKA_PORT: 8761
+      REDIS_HOST: 192.168.1.6
+    ports:
+      - "8881:8881"
+  gatewayserver:
+    build:
+      context: ../../gatewayserver
+      dockerfile: ./Dockerfile
+    links:
+      - eurekaserver
+      - configserver
+    environment:
+      EUREKA_HOST: eurekaserver
+      EUREKA_PORT: 8761
+    ports:
+      - "8080:8080"
+
 

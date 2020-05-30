@@ -1,19 +1,8 @@
-#server:
-#  port: 8080
-#spring:
-#  cloud:
-#    gateway:
-#      routes:
-#        - id: newsservice
-#          uri: lb://newsservice
-#          predicates:
-#            - Path=/news/**
-#eureka:
-#  client:
-#    fetch-registry: true
-#    register-with-eureka: true
-#    service-url:
-#      defaultZone: http://localhost:8761/eureka/
-#  instance:
-#    prefer-ip-address: true
-#
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: newsservice
+          uri: lb://newsservice
+          predicates:
+            - Path=/news/**

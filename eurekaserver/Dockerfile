@@ -1,7 +1,10 @@
+# Start with a base image containing Java runtime
 FROM openjdk:8-jdk-alpine
-LABEL maintainer="pelayochristian.dev@gmail.com"
-VOLUME /tmp
+
+# Make port 8080 available to the world outside this container
 EXPOSE 8888
-ARG JAR_FILE=/target/eurekaserver.jar
-ADD ${JAR_FILE} eurekaserver.jar
-ENTRYPOINT ["java", "-jar", "/eurekaserver.jar"]
+
+ADD target/eurekaserver.jar eurekaserver.jar
+
+# Run the jar file
+ENTRYPOINT ["java","-jar","eurekaserver.jar"]

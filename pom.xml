@@ -10,6 +10,7 @@
     </parent>
     <groupId>com.project</groupId>
     <artifactId>panahon</artifactId>
+    <packaging>pom</packaging>
     <version>0.0.1-SNAPSHOT</version>
     <name>panahon</name>
     <description>Project that will give you real time news</description>
@@ -51,6 +52,33 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>com.spotify</groupId>
+                    <artifactId>dockerfile-maven-plugin</artifactId>
+                    <version>1.4.0</version>
+                    <executions>
+                        <execution>
+                            <id>tag-version</id>
+                            <phase>install</phase>
+                            <goals>
+                                <goal>build</goal>
+                                <goal>tag</goal>
+                                <goal>push</goal>
+                            </goals>
+                            <configuration>
+                                <tag>${project.version}</tag>
+                            </configuration>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <repository>pelayochristian/${project.artifactId}</repository>
+                    </configuration>
+                </plugin>
+            </plugins>
+
+        </pluginManagement>
     </build>
 
 </project>

@@ -1,7 +1,10 @@
+# Start with a base image containing Java runtime
 FROM openjdk:8-jdk-alpine
-LABEL maintainer="pelayochristian.dev@gmail.com"
-VOLUME /tmp
+
+# Make port 8080 available to the world outside this container
 EXPOSE 8888
-ARG JAR_FILE=/target/gatewayserver.jar
-ADD ${JAR_FILE} gatewayserver.jar
-ENTRYPOINT ["java", "-jar", "/gatewayserver.jar"]
+
+ADD target/gatewayserver.jar gatewayserver.jar
+
+# Run the jar file
+ENTRYPOINT ["java","-jar","gatewayserver.jar"]

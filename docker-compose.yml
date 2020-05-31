@@ -1,0 +1,58 @@
+version: "3"
+
+services:
+  # REDIS CONFIGURATION
+  redis:
+    container_name: redis_instance
+    image: "redis:alpine"
+    ports:
+    - "6379:6379"
+
+  # EUREKA SERVER CONFIGURATION
+  eurekaserver:
+    container_name: eurekaserver
+    image: "pelayochristian/eurekaserver:0.0.1-SNAPSHOT"
+    hostname: eurekaserver
+    ports:
+      - "8761:8761"
+
+  # CONFIG SERVER CONFIGURATION
+  configserver:
+    container_name: configserver
+    image: "pelayochristian/configserver:0.0.1-SNAPSHOT"
+    hostname: configserver
+    environment:
+      EUREKA_HOST: eurekaserver
+      EUREKA_PORT: 8761
+    ports:
+      - "8888:8888"
+
+  # NEWS SERVICE CONFIGURATION
+  newsservice:
+    container_name: newsservice
+    image: "pelayochristian/newsservice:0.0.1-SNAPSHOT"
+    links:
+      - eurekaserver
+      - configserver
+      - redis
+    environment:
+      EUREKA_HOST: eurekaserver
+      EUREKA_PORT: 8761
+      REDIS_HOST: 192.168.1.6
+    ports:
+      - "8881:8881"
+
+  # GATEWAY SERVER CONFIGURATION
+  gatewayserver:
+    container_name: gatewayserver
+    image: "pelayochristian/gatewayserver:0.0.1-SNAPSHOT"
+    links:
+      - eurekaserver
+      - configserver
+    environment:
+      EUREKA_HOST: eurekaserver
+      EUREKA_PORT: 8761
+    ports:
+      - "8080:8080"
+
+

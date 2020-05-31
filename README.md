@@ -1,2 +1,0 @@
-# panahon
-News API provider

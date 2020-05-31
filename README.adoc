@@ -1,0 +1,8 @@
+Local Machine Deployment
+-----
+.Start up Eureka
+[source,java]
+----
+cd sample-eureka
+mvn spring-boot:run
+----

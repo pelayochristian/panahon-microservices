@@ -13,4 +13,5 @@ branches:
   only:
     - master
 script:
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   - mvn install

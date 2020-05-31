@@ -1,0 +1,16 @@
+language: java
+jdk:
+  - openjdk8
+cache:
+  directories:
+    - "$HOME/.m2"
+sudo: required
+services: docker
+notifications:
+  email:
+    - pelayochristian.dev@gmail.com
+branches:
+  only:
+    - master
+script:
+  - mvn install

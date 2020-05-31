@@ -43,16 +43,16 @@ services:
       - "8881:8881"
 
   # GATEWAY SERVER CONFIGURATION
-  gatewayserver:
-    container_name: gatewayserver
-    image: "pelayochristian/gatewayserver:0.0.1-SNAPSHOT"
-    links:
-      - eurekaserver
-      - configserver
-    environment:
-      EUREKA_HOST: eurekaserver
-      EUREKA_PORT: 8761
-    ports:
-      - "8080:8080"
+#  gatewayserver:
+#    container_name: gatewayserver
+#    image: "pelayochristian/gatewayserver:0.0.1-SNAPSHOT"
+#    links:
+#      - eurekaserver
+#      - configserver
+#    environment:
+#      EUREKA_HOST: eurekaserver
+#      EUREKA_PORT: 8761
+#    ports:
+#      - "8080:8080"
 
 

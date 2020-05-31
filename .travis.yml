@@ -13,6 +13,6 @@ branches:
   only:
     - master
 script:
-  - sh travis_script/maven_install.sh
+  - mvn install
   - sh travis_script/deploy_to_docker_hub.sh
 #  - sh travis_script/deploy_to_cloud.sh

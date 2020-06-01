@@ -18,7 +18,7 @@ while [ $stop_status -ne 0 ]; do
   docker-compose stop
   stop_status=$?
   counter=$(expr $counter + 1)
-dones
+done
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>> Done Stopping conatainer..."
 echo
 echo

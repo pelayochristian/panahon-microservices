@@ -7,6 +7,9 @@ services:
     image: "redis:alpine"
     ports:
     - "6379:6379"
+    restart:
+      - always
+      - on-failure
 
   # EUREKA SERVER CONFIGURATION
   eurekaserver:
@@ -15,6 +18,9 @@ services:
     hostname: eurekaserver
     ports:
       - "8761:8761"
+    restart:
+      - always
+      - on-failure
 
   # CONFIG SERVER CONFIGURATION
   configserver:
@@ -26,6 +32,9 @@ services:
       EUREKA_PORT: 8761
     ports:
       - "8888:8888"
+    restart:
+      - always
+      - on-failure
 
   # NEWS SERVICE CONFIGURATION
   newsservice:
@@ -41,6 +50,9 @@ services:
       REDIS_HOST: 192.168.1.6
     ports:
       - "8881:8881"
+    restart:
+      - always
+      - on-failure
 
   # GATEWAY SERVER CONFIGURATION
   gatewayserver:
@@ -54,5 +66,8 @@ services:
       EUREKA_PORT: 8761
     ports:
       - "8080:8080"
+    restart:
+      - always
+      - on-failure
 
 

@@ -1,4 +1,3 @@
-# TRAVIS
 language: java
 jdk:
   - openjdk8
@@ -15,5 +14,3 @@ branches:
     - master
 script:
   - mvn install
-#  - sh travis_script/deploy_to_docker_hub.sh
-#  - sh travis_script/deploy_to_cloud.sh

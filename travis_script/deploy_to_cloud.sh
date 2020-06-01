@@ -44,5 +44,5 @@ echo ">>>>>>>>>>>>>>>>>>>>>>>>>> Start Removing conatainer..."
 echo
 echo
 docker-compose pull
-docker-compose -f docker/docker-compose.yml up -d
+docker-compose -f ../docker-compose.yml up -d
 echo "DONE Deployment."

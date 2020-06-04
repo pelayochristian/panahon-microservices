@@ -30,7 +30,7 @@ public class NewsController {
      * @param country {@link String}
      * @return {@link ResponseEntity}
      */
-    @GetMapping(path = "/news-api", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/news-api/top-headlines", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, Object>> obtainNewsAPI(@RequestParam String country) {
         return new ResponseEntity<>(newsService.newsAPI(country), HttpStatus.OK);
     }

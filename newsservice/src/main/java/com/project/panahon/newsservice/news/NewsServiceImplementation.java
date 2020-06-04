@@ -9,7 +9,6 @@ import com.project.panahon.newsservice.news.source.NewsAPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -42,7 +41,6 @@ public class NewsServiceImplementation implements NewsService {
         this.serviceConfig = serviceConfig;
         this.restTemplate = restTemplate;
     }
-
     /**
      * Service function use for scraping data form <tt>https://newsapi.org/</tt>.
      *
@@ -72,7 +70,6 @@ public class NewsServiceImplementation implements NewsService {
         Map<String, Object> jsonResponse = new HashMap<>();
 
         // Construct URL for retrieving from API
-//        String url = String.format("http://newsapi.org/v2/top-headlines?country=%s&apiKey=%s", country, "5003cc84786d46838137513086f998cc");
         String url = String.format(serviceConfig.getNewsAPIURL(), country, serviceConfig.getNewsAPIToken());
 
         try {

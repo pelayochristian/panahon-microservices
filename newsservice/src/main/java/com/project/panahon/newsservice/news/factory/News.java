@@ -12,5 +12,5 @@ import java.util.Map;
  * @since 2020-05-11
  */
 public abstract class News {
-    public abstract Map<String, Object> parseNewsData(ResponseEntity<Object> newsResponse);
+    public abstract Map<String, Object> parseNewsData(ResponseEntity<Object> newsResponse, String jsonAttribute);
 }

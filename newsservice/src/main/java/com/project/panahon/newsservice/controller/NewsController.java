@@ -31,9 +31,22 @@ public class NewsController {
      * @return {@link ResponseEntity}
      */
     @GetMapping(path = "/news-api/top-headlines", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Map<String, Object>> obtainNewsAPI(@RequestParam String country) {
+    public ResponseEntity<Map<String, Object>> obtainNewsAPIHeadlines(@RequestParam String country) {
         return new ResponseEntity<>(newsService.newsAPI(country), HttpStatus.OK);
     }
+
+    @GetMapping(path = "/news-api/sources", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Map<String, Object>> obtainNewsApiSources(@RequestParam String country) {
+        return new ResponseEntity<>(newsService.newsApiSources(country), HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/news-api/everything", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Map<String, Object>> obtainNewsApiEverything(@RequestParam String query,
+                                                                       @RequestParam String startDate,
+                                                                       @RequestParam String endDate) {
+        return new ResponseEntity<>(newsService.newsApiEverything(query, startDate, endDate), HttpStatus.OK);
+    }
+
 
     @GetMapping(path = "/test")
     public ResponseEntity<Map<String, Object>> test() {

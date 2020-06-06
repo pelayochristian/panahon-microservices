@@ -32,6 +32,11 @@ public class NewsServiceImplementation implements NewsService {
     private ServiceConfig serviceConfig;
     private static Logger logger = LoggerFactory.getLogger(NewsServiceImplementation.class);
     private int newsAPiCounter = 1;
+    private int newsAPISources = 1;
+    private int newsAPIEverything = 1;
+    private static final String NEWS_API_HEADLINE_ARTICLES = "articles";
+    private static final String NEWS_API_SOURCES = "sources";
+
 
     @Autowired
     public NewsServiceImplementation(RedisCacheManager redisCacheManager,
@@ -41,18 +46,19 @@ public class NewsServiceImplementation implements NewsService {
         this.serviceConfig = serviceConfig;
         this.restTemplate = restTemplate;
     }
+
     /**
      * Service function use for scraping data form <tt>https://newsapi.org/</tt>.
      *
      * @param country {@link String}
      * @return {@link Map}
      */
-    @SuppressWarnings("unchecked")
     @Override
     public Map<String, Object> newsAPI(String country) {
 
         // Get the cache
-        Map<String, Object> cache = redisCacheManager.obtainCache(country, NewsAPI.class.getSimpleName(), Map.class);
+        Map<String, Object> cache = redisCacheManager.obtainCache(country, NewsAPI.class.getSimpleName()
+                + "callNewsAPI", Map.class);
 
         // Check if exist
         if (cache != null) {
@@ -63,7 +69,117 @@ public class NewsServiceImplementation implements NewsService {
         }
     }
 
+    @Override
+    public Map<String, Object> newsApiSources(String country) {
+        // Get the cache
+        Map<String, Object> cache = redisCacheManager.obtainCache(country, NewsAPI.class.getSimpleName()
+                + "callNewsApiSources", Map.class);
+
+        // Check if exist
+        if (cache != null) {
+            logger.info("Data is already in the cache.");
+            return cache;
+        } else { // Else call the API to fetch data.
+            return callNewsApiSources(country, redisCacheManager);
+        }
+    }
+
+    @Override
+    public Map<String, Object> newsApiEverything(String query, String startDate, String endDate) {
+        // Get the cache
+        Map<String, Object> cache = redisCacheManager.obtainCache(query, NewsAPI.class.getSimpleName()
+                + "newsApiEverything", Map.class);
+
+        // Check if exist
+        if (cache != null) {
+            logger.info("Data is already in the cache.");
+            return cache;
+        } else { // Else call the API to fetch data.
+            return callNewsApiEverything(query, startDate, endDate, redisCacheManager);
+        }
+    }
+
+    /**
+     * Method to query a data from the <code>newsapi.org</code> api everything.
+     *
+     * @param query        String
+     * @param startDate    String
+     * @param endDate      String
+     * @param cacheManager Cache
+     * @return Map
+     */
+    private Map<String, Object> callNewsApiEverything(String query, String startDate, String endDate, RedisCacheManager cacheManager) {
+        newsAPIEverything++;
+
+        Map<String, Object> jsonResponse = new HashMap<>();
+        String url = String.format(serviceConfig.getNewsAPIEverything(), query, startDate, endDate, serviceConfig.getNewsAPIToken());
+
+        try {
+            logger.info("Start Retrieving data from {}", url);
+
+            // Get the Response entity via rest-template.
+            ResponseEntity<Object> responseEntity = restTemplate.getForEntity(url, Object.class);
+            News news = NewsFactory.getNewsDataParser(NewsSourceType.NEWS_API);
+
+            logger.info("Data fetched from {}", url);
+
+            // Get the filtered data.
+            jsonResponse = news.parseNewsData(responseEntity, NEWS_API_HEADLINE_ARTICLES);
+
+            logger.info("Save the data to cache {}", url);
+
+            cacheManager.putCache(query, NewsAPI.class.getSimpleName() + "callNewsApiSources", jsonResponse);
+            cacheManager.obtainExpire(query);
+        } catch (Exception e) {
+            if (newsAPIEverything != 2) {
+                logger.error("Error in data retrieval. {}", e.getMessage());
+                jsonResponse.put(NewsAPI.class.getSimpleName(), e.toString());
+            }
+        }
+        return jsonResponse;
+    }
+
+    /**
+     * Service function to call the API and retrieve form <code>newsapi.org</code> sources.
+     *
+     * @param country      String
+     * @param cacheManager cache
+     * @return Map
+     */
+    public Map<String, Object> callNewsApiSources(String country, RedisCacheManager cacheManager) {
+        newsAPISources++;
+
+        Map<String, Object> jsonResponse = new HashMap<>();
+        String url = String.format(serviceConfig.getNewsAPISources(), country, serviceConfig.getNewsAPIToken());
+
+        try {
+            logger.info("Start Retrieving data from {}", url);
+
+            // Get the Response entity via rest-template.
+            ResponseEntity<Object> responseEntity = restTemplate.getForEntity(url, Object.class);
+            News news = NewsFactory.getNewsDataParser(NewsSourceType.NEWS_API);
+
+            logger.info("Data fetched from {}", url);
+
+            // Get the filtered data.
+            jsonResponse = news.parseNewsData(responseEntity, NEWS_API_SOURCES);
+
+            logger.info("Save the data to cache.");
+
+            cacheManager.putCache(country, NewsAPI.class.getSimpleName() + "callNewsApiSources", jsonResponse);
+            cacheManager.obtainExpire(country);
+        } catch (Exception e) {
+            if (newsAPISources != 2) {
+                logger.error("Error in data retrieval. {}", e.getMessage());
+                jsonResponse.put(NewsAPI.class.getSimpleName(), e.toString());
+            }
+        }
+        return jsonResponse;
+    }
+
+
     public Map<String, Object> callNewsAPI(String country, RedisCacheManager cacheManager) {
+
         newsAPiCounter++;
 
         // Response holder
@@ -78,30 +194,21 @@ public class NewsServiceImplementation implements NewsService {
 
             // Get the Response entity via rest-template.
             ResponseEntity<Object> responseEntity = restTemplate.getForEntity(url, Object.class);
-
-            // Get the instance for NEWS_API.
             News news = NewsFactory.getNewsDataParser(NewsSourceType.NEWS_API);
 
             logger.info("Data fetched.");
 
             // Get the filtered data.
-            jsonResponse = news.parseNewsData(responseEntity);
+            jsonResponse = news.parseNewsData(responseEntity, NEWS_API_HEADLINE_ARTICLES);
 
             logger.info("Save the data to cache.");
 
-            // Add to cache
-            cacheManager.putCache(country, NewsAPI.class.getSimpleName(), jsonResponse);
-
-            // Set expiration
+            cacheManager.putCache(country, NewsAPI.class.getSimpleName() + "callNewsAPI", jsonResponse);
             cacheManager.obtainExpire(country);
         } catch (Exception e) {
-            switch (newsAPiCounter) {
-                case 2:
-                    break;
-                default:
-                    logger.error("Error in data retrieval. {}", e.getMessage());
-                    jsonResponse.put(NewsAPI.class.getSimpleName(), e.toString());
-                    break;
+            if (newsAPiCounter != 2) {
+                logger.error("Error in data retrieval. {}", e.getMessage());
+                jsonResponse.put(NewsAPI.class.getSimpleName(), e.toString());
             }
         }
         return jsonResponse;

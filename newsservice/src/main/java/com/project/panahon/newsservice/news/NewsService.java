@@ -9,4 +9,8 @@ import java.util.Map;
  */
 public interface NewsService {
     Map<String, Object> newsAPI(String country);
+
+    Map<String, Object> newsApiSources(String country);
+
+    Map<String, Object> newsApiEverything(String query, String startDate, String endDate);
 }

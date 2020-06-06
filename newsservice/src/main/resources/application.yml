@@ -4,6 +4,8 @@ server:
 api:
   news-api:
     uri: http://newsapi.org/v2/top-headlines?country=%s&apiKey=%s
+    uriSources: https://newsapi.org/v2/sources?language=en&country=%s&apiKey=%s
+    uriEverything: https://newsapi.org/v2/everything?q=%s&from=%s&to=%s&sortBy=popularity&apiKey=%s
     token: 5003cc84786d46838137513086f998cc
 
 redis:

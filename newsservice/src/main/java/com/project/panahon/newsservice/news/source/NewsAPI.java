@@ -23,13 +23,13 @@ public class NewsAPI extends News {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public Map<String, Object> parseNewsData(ResponseEntity<Object> newsResponse) {
+    public Map<String, Object> parseNewsData(ResponseEntity<Object> newsResponse, String jsonAttribute) {
         Map<String, Object> newsMap = new HashMap<>();
 
         // Get the list list of articles from the news response.
         List<LinkedHashMap<String, Object>> bodyListResponse = (List<LinkedHashMap<String, Object>>)
                 ((LinkedHashMap<String, LinkedHashMap<String, LinkedHashMap<String, Object>>>)
-                        Objects.requireNonNull(newsResponse.getBody())).get("articles");
+                        Objects.requireNonNull(newsResponse.getBody())).get(jsonAttribute);
 
         newsMap.put(this.getClass().getSimpleName(), bodyListResponse);
 

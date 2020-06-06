@@ -6,6 +6,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class ServiceConfig {
 
+
+    @Value("${api.news-api.uriEverything}")
+    public String newsAPIEverything;
+
+    @Value("${api.news-api.uriSources}")
+    public String newsAPISources;
+
     @Value("${api.news-api.uri}")
     private String newsAPIURL;
 
@@ -25,5 +32,13 @@ public class ServiceConfig {
 
     public int getExpireDuration() {
         return expireDuration;
+    }
+
+    public String getNewsAPISources() {
+        return newsAPISources;
+    }
+
+    public String getNewsAPIEverything() {
+        return newsAPIEverything;
     }
 }

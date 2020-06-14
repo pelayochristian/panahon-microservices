@@ -5,6 +5,7 @@ import com.project.panahon.newsservice.config.ServiceConfig;
 import com.project.panahon.newsservice.news.factory.News;
 import com.project.panahon.newsservice.news.factory.NewsFactory;
 import com.project.panahon.newsservice.news.factory.NewsSourceType;
+import com.project.panahon.newsservice.news.source.Category;
 import com.project.panahon.newsservice.news.source.NewsAPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,8 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Service class that implements method form {@link NewsService} <br>
@@ -27,6 +27,7 @@ import java.util.Map;
 @Service
 public class NewsServiceImplementation implements NewsService {
 
+    private static final String NEWS_API_CATEGORY = "category";
     private RedisCacheManager redisCacheManager;
     private RestTemplate restTemplate;
     private ServiceConfig serviceConfig;
@@ -54,18 +55,18 @@ public class NewsServiceImplementation implements NewsService {
      * @return {@link Map}
      */
     @Override
-    public Map<String, Object> newsAPI(String country) {
+    public Map<String, Object> newsAPI(String country, String category) {
 
         // Get the cache
         Map<String, Object> cache = redisCacheManager.obtainCache(country, NewsAPI.class.getSimpleName()
-                + "callNewsAPI", Map.class);
+                + "callNewsAPI" + category, Map.class);
 
         // Check if exist
         if (cache != null) {
             logger.info("Data is already in the cache.");
             return cache;
         } else { // Else call the API to fetch data.
-            return callNewsAPI(country, redisCacheManager);
+            return callNewsAPI(country, category, redisCacheManager);
         }
     }
 
@@ -100,6 +101,21 @@ public class NewsServiceImplementation implements NewsService {
     }
 
     /**
+     * Method to return list of categories available
+     *
+     * @return List
+     */
+    @Override
+    public List<String> newsCategories() {
+        Category[] categories = Category.values();
+        List<String> tempCategoryList = new ArrayList<>();
+        for (Category category : categories) {
+            tempCategoryList.add(category.getAction());
+        }
+        return tempCategoryList;
+    }
+
+    /**
      * Method to query a data from the <code>newsapi.org</code> api everything.
      *
      * @param query        String
@@ -110,10 +126,8 @@ public class NewsServiceImplementation implements NewsService {
      */
     private Map<String, Object> callNewsApiEverything(String query, String startDate, String endDate, RedisCacheManager cacheManager) {
         newsAPIEverything++;
-
         Map<String, Object> jsonResponse = new HashMap<>();
         String url = String.format(serviceConfig.getNewsAPIEverything(), query, startDate, endDate, serviceConfig.getNewsAPIToken());
-
         try {
             logger.info("Start Retrieving data from {}", url);
 
@@ -148,10 +162,8 @@ public class NewsServiceImplementation implements NewsService {
      */
     public Map<String, Object> callNewsApiSources(String country, RedisCacheManager cacheManager) {
         newsAPISources++;
-
         Map<String, Object> jsonResponse = new HashMap<>();
         String url = String.format(serviceConfig.getNewsAPISources(), country, serviceConfig.getNewsAPIToken());
-
         try {
             logger.info("Start Retrieving data from {}", url);
 
@@ -178,32 +190,38 @@ public class NewsServiceImplementation implements NewsService {
     }
 
 
-    public Map<String, Object> callNewsAPI(String country, RedisCacheManager cacheManager) {
-
+    /**
+     * Service method to get data top-headlines for <code>newsapi.org</code>
+     *
+     * @param country      String
+     * @param category     String
+     * @param cacheManager cache
+     * @return Map
+     */
+    public Map<String, Object> callNewsAPI(String country, String category, RedisCacheManager cacheManager) {
         newsAPiCounter++;
-
-        // Response holder
         Map<String, Object> jsonResponse = new HashMap<>();
-
-        // Construct URL for retrieving from API
         String url = String.format(serviceConfig.getNewsAPIURL(), country, serviceConfig.getNewsAPIToken());
-
         try {
 
-            logger.info("Start Retrieving data from the source.");
+            // Check if category is present.
+            if (category != null && !category.isEmpty()) {
+                url = url + "&" + NEWS_API_CATEGORY + "=" + category;
+            }
+            logger.info("Start Retrieving data from the source {}", url);
 
             // Get the Response entity via rest-template.
             ResponseEntity<Object> responseEntity = restTemplate.getForEntity(url, Object.class);
             News news = NewsFactory.getNewsDataParser(NewsSourceType.NEWS_API);
 
-            logger.info("Data fetched.");
+            logger.info("Data fetched from {}", url);
 
             // Get the filtered data.
             jsonResponse = news.parseNewsData(responseEntity, NEWS_API_HEADLINE_ARTICLES);
 
             logger.info("Save the data to cache.");
 
-            cacheManager.putCache(country, NewsAPI.class.getSimpleName() + "callNewsAPI", jsonResponse);
+            cacheManager.putCache(country, NewsAPI.class.getSimpleName() + "callNewsAPI" + category, jsonResponse);
             cacheManager.obtainExpire(country);
         } catch (Exception e) {
             if (newsAPiCounter != 2) {

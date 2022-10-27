@@ -16,10 +16,10 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class RedisCacheManager {
 
-    private ServiceConfig serviceConfig;
+    private final ServiceConfig serviceConfig;
 
     @SuppressWarnings("rawtypes")
-    private RedisTemplate redisTemplate;
+    private final RedisTemplate redisTemplate;
 
     @SuppressWarnings("rawtypes")
     @Autowired
@@ -89,7 +89,7 @@ public class RedisCacheManager {
     }
 
     /**
-     * Redis Manager function use for setting a expire <br>
+     * Redis Manager function use for setting an expired <br>
      * duration of a certain cache by providing the cache <br>
      * key.
      *
